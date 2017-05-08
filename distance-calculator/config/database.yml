@@ -1,0 +1,17 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  host: 127.0.0.1
+  username: root
+  password:
+  # socket: /var/run/mysqld/mysqld.sock
+  socket: /tmp/mysqld.sock
+
+development:
+  <<: *default
+  database: distance_calculator
+
+test:
+  <<: *default
+  database: distance_calculator_test
