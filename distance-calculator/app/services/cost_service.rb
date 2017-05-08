@@ -33,6 +33,10 @@ class CostService
   end
 
   def courses
-    Course.all.map{ |course| [course.origin_location.name, course.destiny_location.name, (course.distance * @weight * COST_TAX)] }
+    Course.all.map{ |course| [course.origin_location.name, course.destiny_location.name, cost_by_distance(course.distance)] }
+  end
+
+  def cost_by_distance(distance)
+    distance * @weight * COST_TAX
   end
 end
