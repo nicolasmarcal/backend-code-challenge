@@ -6,37 +6,33 @@ class CostService
   include ActiveModel::Validations
   include ActiveModel::Conversion
 
-  attr_accessor :origin, :destiny, :weight, :distance, :path
+  attr_accessor :origin, :destiny, :weight, :distance, :path, :cost
 
-  validates :origin, :destiny, :weight, :distance, :path, presence: true
+  validates :origin, :destiny, :weight, presence: true
 
   COST_TAX = 0.15
 
   def initialize(origin, destiny, weight)
-    @origin, @destiny = origin, destiny
-    load_path
+    @origin, @destiny, @weight = Location.find_by(name: origin), Location.find_by(name: destiny), weight.to_i
   end
 
   def cost_and_path
+    load_path
     {
       path: @path,
-      cost: cost
+      cost: @cost
     }
   end
 
   private
 
-  def cost
-    @distance * @weight * COST_TAX
-  end
-
   def load_path
-    distance_calc = Dijkstra.new(@origin, @destination, courses)
-    @distance = distance_calc.cost.to_i
+    distance_calc = Dijkstra.new(@origin.name, @destiny.name, courses)
+    @cost = distance_calc.cost
     @path = distance_calc.shortest_path
   end
 
   def courses
-    Course.all.map{ |course| [course.origin_location.name, course.destiny_location.name, course.distance] }
+    Course.all.map{ |course| [course.origin_location.name, course.destiny_location.name, (course.distance * @weight * COST_TAX)] }
   end
 end

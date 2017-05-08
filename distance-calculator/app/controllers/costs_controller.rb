@@ -1,8 +1,8 @@
-class CostController < ApplicationController
+class CostsController < ApplicationController
   include ActionController::Serialization
 
   def show
-    render_cached_json("cost_api") do
+    render_cached_json("cost_api_#{permited_params[:origin]}_#{permited_params[:destination]}_#{permited_params[:weight]}30") do
       cost = CostService.new(permited_params[:origin], permited_params[:destination], permited_params[:weight])
 
       if cost.valid?
@@ -16,7 +16,7 @@ class CostController < ApplicationController
   private
 
   def render_cached_json(cache_key, opts = {}, &block)
-    opts[:expires_in] ||= 1.day
+    opts[:expires_in] ||= 1.second
 
     expires_in(opts[:expires_in], :public => true)
 
